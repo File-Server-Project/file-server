@@ -13,7 +13,11 @@ const db = new sqlite3.Database(
 // db.run('CREATE TABLE users ("userId"	INTEGER NOT NULL,"name"	TEXT,"email"	TEXT,"password"	TEXT,PRIMARY KEY("userId" AUTOINCREMENT))');
 
 // Create files table
-db.run('CREATE TABLE "files" ("fileId"	INTEGER NOT NULL,"fileName"	TEXT,"description"	TEXT,"createdBy"	INTEGER,FOREIGN KEY("createdBy") REFERENCES "users"("userId"),PRIMARY KEY("fileId" AUTOINCREMENT))');
+// db.run('CREATE TABLE "files" ("fileId"	INTEGER NOT NULL,"fileName"	TEXT,"description"	TEXT,"createdBy"	INTEGER,FOREIGN KEY("createdBy") REFERENCES "users"("userId"),PRIMARY KEY("fileId" AUTOINCREMENT))');
+
+// Create emails table
+db.run('CREATE TABLE "emails" ("emailId"	INTEGER NOT NULL,"emailFile"	INTEGER,PRIMARY KEY("emailId" AUTOINCREMENT),FOREIGN KEY("emailFile") REFERENCES "files"("fileId"))');
+
 
 db.close((err) => {
    if (err) return console.error(err.message);
