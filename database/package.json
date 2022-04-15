@@ -8,8 +8,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "sqlite3": "^5.0.3"
-  }
+  "license": "ISC"
 }
