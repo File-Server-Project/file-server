@@ -8,3 +8,7 @@ const db = new sqlite3.Database(
 
         console.log('connection successful');
     });
+
+    db.close((err) => {
+        if (err) return console.error(err.message);
+    });
