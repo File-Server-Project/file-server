@@ -27,5 +27,22 @@ usersRouter.post('/', (req, res) => {
 })
 
 
+// Get all users
+usersRouter.get('/', async (req, res) => {
+    const query = 'SELECT * FROM users';
+
+    await db.all(query, [], (err, rows) => {
+        if(err) return console.error(err.message);
+        // const receiveuser = {};
+        // rows.forEach((row) => {
+        //     console.log(row);
+        //     receiveuser += row;
+        // })
+
+        res.json(rows);
+    } )
+    
+})
+
 
 module.exports = usersRouter;
