@@ -34,13 +34,15 @@ app.get('/Register', function(req, res) {
   });
 
 // index page
+
 app.post('/login', function(req, res) {
-  res.render('index');
+  res.redirect('/Index');
 });
 
 
+
 app.post('/register', function(req, res) {
-    res.render('Register');
+    res.redirect('/Register');
   });
 
 
