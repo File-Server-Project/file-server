@@ -25,14 +25,27 @@ app.get('/Register', function(req, res) {
     res.render('Login');
   });
 
+  app.get('/FeedPage', function(req, res) {
+    res.render('feedPage');
+  });
+
+  app.get('/Index', function(req, res) {
+    res.render('index');
+  });
+
 // index page
 app.post('/login', function(req, res) {
   res.render('index');
 });
 
-// index page
+
 app.post('/register', function(req, res) {
     res.render('Register');
+  });
+
+
+  app.get('/search', function(req, res) {
+    res.render('index');
   });
 
 app.listen(8080, () => {
