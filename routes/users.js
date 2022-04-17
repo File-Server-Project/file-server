@@ -15,13 +15,14 @@ usersRouter.post('/', (req, res) => {
         query,
         [name, email, password],
         (err) => {
-            console.error("add success");
+            if(err) return console.error(err.message);
+
+            console.log("User added successfully");
+            res.json("User added successfully");
         }
     );
 
-    db.close((err) => {
-        if (err) return console.error(err.message);
-     });
+  
 
     res.json("User was Created");
 })
@@ -31,18 +32,19 @@ usersRouter.post('/', (req, res) => {
 usersRouter.get('/', async (req, res) => {
     const query = 'SELECT * FROM users';
 
-    await db.all(query, [], (err, rows) => {
+    await db.run(query, (err, rows) => {
         if(err) return console.error(err.message);
-        // const receiveuser = {};
-        // rows.forEach((row) => {
-        //     console.log(row);
-        //     receiveuser += row;
-        // })
-
+       
         res.json(rows);
     } )
     
 })
 
+// Get individual User
+// usersRouter.get('/:id', async(req, res) => {
+//     const id = req.params;
+//     const query = 'SELECT * FROM users WHERE userId = ';
+//     await db.run(query);
+// });
 
 module.exports = usersRouter;
