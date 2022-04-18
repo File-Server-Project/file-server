@@ -60,10 +60,8 @@ app.post('/login', urlencodedParser, [
       .exists()
       .isLength({ min: 3 }),
   check('email', 'Email is not valid')
-      .isEmpty()
-      .isEmail()
-      .normalizeEmail(),
-  check('password', 'Invalid password').isEmpty().isLength({ min: 7 })
+      .isEmail(),
+  check('password', 'Invalid password').isLength({ min: 7 })
 
 ], (req, res) => {
     const errors = validationResult(req)
@@ -74,7 +72,7 @@ app.post('/login', urlencodedParser, [
       res.render('Login', {alert});
     }
     //res.redirect('/Register');
-    res.json(req.body);
+    res.render('index');
   });
 
 
@@ -83,10 +81,8 @@ app.post('/register', urlencodedParser, [
       .exists()
       .isLength({ min: 3 }),
   check('email', 'Email is not valid')
-      .isEmpty()
-      .isEmail()
-      .normalizeEmail(),
-  check('password', 'Invalid password').isEmpty().isLength({ min: 7 })
+      .isEmail(),
+  check('password', 'Invalid password').isLength({ min: 7 })
 
 ], (req, res) => {
     const errors = validationResult(req)
@@ -112,9 +108,32 @@ app.post('/register', urlencodedParser, [
 
 
 
-  app.get('/search', function(req, res) {
+  app.post('/password', urlencodedParser, [
+    check('username', 'This username must be 3+ characters long')
+        .exists()
+        .isLength({ min: 3 }),
+    check('email', 'Email is not valid')
+        .isEmail(),
+  
+  ], (req, res) => {
+      const errors = validationResult(req)
+      if(!errors.isEmpty()) {
+        //return res.status(422).jsonp(errors.array())
+        const alert = errors.array();
+  
+        res.render('ForgetPassword', {alert});
+      }
+  });
+
+  app.post('/reset', function(req, res) {
     res.render('index');
   });
+
+  app.get('/search', function(req, res) {
+    res.render('index', {items} );
+  });
+
+
 
 app.listen(8080, () => {
     console.log('Server is listening on port 8080')
