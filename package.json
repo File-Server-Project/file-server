@@ -19,6 +19,7 @@
   "homepage": "https://github.com/File-Server-Project/file-server#readme",
   "dependencies": {
     "express": "^4.17.3",
+    "nodemailer": "^6.7.3",
     "sqlite3": "^5.0.3"
   }
 }

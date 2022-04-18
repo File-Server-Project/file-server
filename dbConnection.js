@@ -26,9 +26,9 @@ const db = new sqlite3.Database("./database/files.db", sqlite3.OPEN_READWRITE, (
 //     })
 // } )
 
-db.close((err) => {
-    if (err) return console.error(err.message);
-})
+// db.close((err) => {
+//     if (err) return console.error(err.message);
+// })
 
 
 module.exports = db;
