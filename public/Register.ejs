@@ -33,6 +33,17 @@
 
     <div class="container">
 
+      <% if(typeof alert != 'undefined') { %>
+          <% alert.forEach(function(error) { %>
+            <div class="alert alert-warning alert dismissible fade show" role="alert">
+              <%= error.msg %>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+        <% }) %>
+      <% } %>    
+
     <form action="/register" method="POST">
 
       <div class="form-group">
@@ -42,7 +53,7 @@
 
         <div class="form-group">
           <label for="Email" class="form-label">Email</label>
-          <input type="text" class="form-control" name="Email" id="Email" placeholder="email">
+          <input type="text" class="form-control" name="email" id="Email" placeholder="email">
         </div>
 
         <div class="form-group">
@@ -52,7 +63,7 @@
 
         <div class="form-group">
             <label for="password1" class="form-label"> Confirm Password</label>
-          <input type="text" class="form-control" name="password1" id="password1" placeholder="confirm password">
+          <input type="text" class="form-control" name="confirmpassword" id="confirmpassword" placeholder="confirm password">
         </div>
 
         <button type="submit" class="btn btn-primary">Register</button>
