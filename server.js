@@ -111,6 +111,7 @@ app.post('/register', urlencodedParser, [
 
 
 
+
   app.get('/search', function(req, res) {
     res.render('index');
   });
