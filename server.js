@@ -98,7 +98,7 @@ app.post('/register', urlencodedParser, [
     }
     //res.redirect('/Register');git remote -v
     
-    res.json(req.body);
+    res.redirect('/Login');
   });
 
   app.post('/upload', upload.single('upload'), (req, res) => {
