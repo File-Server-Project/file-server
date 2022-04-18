@@ -2,6 +2,18 @@
 const express = require('express');
 const app = express();
 
+const cors = require("cors");
+
+app.use(
+    cors({
+        // origin: "http://127.0.0.1:5502",
+        origin: "http://127.0.0.1:5500/"
+
+        
+        // methods: ["GET", "POST", "PUT", "DELETE"]
+    })
+)
+
 app.use(express.json());
 
 // User Router

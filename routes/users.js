@@ -39,7 +39,7 @@ usersRouter.post('/signUp', (req, res) => {
 //  Login user
 usersRouter.post('/login', async(req, res) => {
     const {email, password} = req.body;
-    // console.log(name);
+    console.log(email, password);
     const query = `SELECT * FROM users WHERE email LIKE "%${email}%" AND password LIKE "%${password}%" `;
    
     await db.all(query, (err, rows) => {
