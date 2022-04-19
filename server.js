@@ -4,6 +4,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const { extname, resolve } = require('path');
 
+app.use(express.json())
 //  Import dbConnection
 const db = require('./dbConnection');
 
@@ -132,11 +133,27 @@ app.post('/register', urlencodedParser, [
     // res.redirect('/Login');
   });
 
-  app.post('/upload', upload.single('upload'), (req, res) => {
+  app.post('/upload', upload.single('upload'), async (req, res) => {
      // res.redirect('/Index');
      //console.log(req);
      //console.log(req.body);
      //console.log(req.file);
+     const {title, description} = req.body;
+
+     const query = 'INSERT INTO files (title, description) VALUES (?, ?)';
+   
+     await db.run(
+         query,
+         [title, description],
+         (err) => {
+             if(err) return console.error(err.message);
+             console.log("File added successfully");
+             // res.json("User added successfully");
+             res.json("File added successfully");
+            //  res.redirect('/Login');
+         }
+     );
+
      res.json(req.body);
     });
 
@@ -166,6 +183,27 @@ app.post('/register', urlencodedParser, [
 
   app.get('/search', function(req, res) {
     res.render('index', {items} );
+
+  });
+
+  app.post("/download", async (req, res) => {
+    console.log(req.body);
+
+    const {downloadFile} = req.body;
+
+    const query = `INSERT INTO downloads (downloadFile) VALUES (?)`;
+
+    await db.run(
+      query,
+      [downloadFile],
+      (err) => {
+          if(err) return console.error(err.message);
+          console.log("Download added successfully");
+          // res.json("User added successfully");
+          res.json('Download added successfully');
+      }
+  );
+    res.json(downloadFile);
   });
 
 
