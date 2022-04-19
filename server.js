@@ -104,7 +104,7 @@ app.post('/register', urlencodedParser, [
       .isEmail(),
   check('password', 'Invalid password').isLength({ min: 7 })
 
-], (req, res) => {
+], async (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()) {
       //return res.status(422).jsonp(errors.array())
@@ -114,9 +114,22 @@ app.post('/register', urlencodedParser, [
     }
     //res.redirect('/Register');git remote -v
     
+    const {username, email, password} = req.body;
+    console.log(username);
+    const query = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
    
+    await db.run(
+        query,
+        [username, email, password],
+        (err) => {
+            if(err) return console.error(err.message);
+            console.log("User added successfully");
+            // res.json("User added successfully");
+            res.redirect('/Login');
+        }
+    );
 
-    res.redirect('/Login');
+    // res.redirect('/Login');
   });
 
   app.post('/upload', upload.single('upload'), (req, res) => {
