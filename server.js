@@ -182,27 +182,13 @@ app.post('/register', urlencodedParser, [
   });
 
   app.get('/search', function(req, res) {
+
     res.render('index', {items} );
 
   });
 
-  app.post("/download", async (req, res) => {
-    console.log(req.body);
+  app.post("/download",  (req, res) => {
 
-    const {downloadFile} = req.body;
-
-    const query = `INSERT INTO downloads (downloadFile) VALUES (?)`;
-
-    await db.run(
-      query,
-      [downloadFile],
-      (err) => {
-          if(err) return console.error(err.message);
-          console.log("Download added successfully");
-          // res.json("User added successfully");
-          res.json('Download added successfully');
-      }
-  );
     res.json(downloadFile);
   });
 
