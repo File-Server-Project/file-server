@@ -181,15 +181,29 @@ app.post('/register', urlencodedParser, [
     res.render('index');
   });
 
-  app.get('/search', function(req, res) {
+  app.get('/search', async function(req, res) {
+    const {search} = req.body;
 
-    res.render('index', {items} );
+    const query = `SELECT * FROM files WHERE title LIKE "%${search}%" AND description LIKE "%${search}%" `;
+
+    await db.all(query, (err, rows) => {
+      if(err) return console.error(err.message);
+      console.log(rows.length);
+      if (rows.length === 0){
+          res.json("Invalid user");
+          console.log("No such file");
+      }else{
+          res.json(rows);
+          console.log(rows);
+
+      }
+  });
+    // res.render('index', {items} );
 
   });
 
   app.post("/download",  (req, res) => {
-
-    res.json(downloadFile);
+    console.log(req.body);
   });
 
 
