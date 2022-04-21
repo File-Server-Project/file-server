@@ -64,9 +64,9 @@ app.get('/Register', function(req, res) {
     res.render('index');
   });
 
-  // app.get('/ForgetPassword', function(req, res) {
-  //   res.render('ForgetPassword');
-  // });
+  app.get('/ForgetPassword', function(req, res) {
+    res.render('ForgetPassword');
+  });
 
 // index page
 /*
@@ -160,23 +160,25 @@ async (req, res) => {
   });
 
   // Forgot Password
-  app.post('/forgotPassword', 
+app.post('/forgotPassword', 
   urlencodedParser, 
-  [
-    check('username', 'This username must be 3+ characters long')
-        .exists()
-        .isLength({ min: 3 }),
-    check('email', 'Email is not valid')
-        .isEmail(),
+  // [
+  //   check('username', 'This username must be 3+ characters long')
+  //       .exists()
+  //       .isLength({ min: 3 }),
+  //   check('email', 'Email is not valid')
+  //       .isEmail(),
   
-  ], 
+  // ], 
   async (req, res) => {
-      const errors = validationResult(req)
-      if(!errors.isEmpty()) {
+      // const errors = validationResult(req)
+      // if(!errors.isEmpty()) {
         //return res.status(422).jsonp(errors.array())
-        const alert = errors.array();
-        
-        const {email} = req.body;
+        // const alert = errors.array();
+
+
+        const {username, email} = req.body;
+        console.log(username, email);
 
         const query = `SELECT * FROM users WHERE email LIKE "%${email}%"`;
 
@@ -223,7 +225,7 @@ async (req, res) => {
       });
 
         // res.render('ForgetPassword', {alert});
-      }
+      // }
   });
 
   // Reset Password
@@ -297,7 +299,7 @@ async (req, res) => {
   });
 
   // file Search
-  app.get('/fileSearch', async function(req, res) {
+  app.get('/fileSearch', urlencodedParser, async function(req, res) {
     const {search} = req.body;
     console.log(search);
     const query = `SELECT * FROM files WHERE title LIKE "%${search}%" AND description LIKE "%${search}%" `;
