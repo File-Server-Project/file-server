@@ -6,7 +6,7 @@ const { extname, resolve } = require('path');
 
 const nodemailer = require("nodemailer");
 
-app.use(express.json())
+app.use(express.json());
 //  Import dbConnection
 const db = require('./dbConnection');
 
@@ -265,7 +265,7 @@ app.post('/signUp', urlencodedParser, [
       if(err) return console.error(err.message);
       console.log(rows.length);
       if (rows.length === 0){
-          res.json("Invalid user");
+          res.json("No such file");
           console.log("No such file");
       }else{
           res.json(rows);
