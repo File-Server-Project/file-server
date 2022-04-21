@@ -4,15 +4,24 @@ const app = express();
 const bodyParser = require('body-parser');
 const { extname, resolve } = require('path');
 
+const uploadLib = require('express-fileupload');
+
+const port = process.env.PORT || 8080;
+
 const nodemailer = require("nodemailer");
 
-app.use(express.json());
+
 //  Import dbConnection
 const db = require('./dbConnection');
 
+app.use(uploadLib());
+app.use(express.json());  // accept data in json format
+// app.use(express.urlencoded()); // decode data from the HTML form
+
 //imports
-const multer = require('multer');
+// const multer = require('multer');
 const { check, validationResult } = require('express-validator');
+// const { timeLog } = require('console');
 const uuid = require('uuid').v4;
 
 // set the view engine to ejs
@@ -22,16 +31,16 @@ app.set('view engine', 'ejs');
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) =>{
-    cb(null, './uploads/');
-  },
-  filename: (req, file, cb) => {
-    const { originalname } = file;
-    cb(null, `${uuid()}-${originalname}`);
-  }
-});
-const upload = multer({ storage: storage });
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) =>{
+//     cb(null, './uploads/');
+//   },
+//   filename: (req, file, cb) => {
+//     const { originalname } = file;
+//     cb(null, `${uuid()}-${originalname}`);
+//   }
+// });
+// const upload = multer({ storage: storage });
 
 
 // login page
@@ -55,6 +64,10 @@ app.get('/Register', function(req, res) {
     res.render('index');
   });
 
+  // app.get('/ForgetPassword', function(req, res) {
+  //   res.render('ForgetPassword');
+  // });
+
 // index page
 /*
 app.post('/login', function(req, res) {
@@ -65,7 +78,9 @@ app.post('/login', function(req, res) {
 // Users Section
 
 // Login
-app.post('/login', urlencodedParser, [
+app.post('/login', 
+urlencodedParser, 
+[
   check('username', 'This username must be 3+ characters long')
       .exists()
       .isLength({ min: 3 }),
@@ -73,7 +88,8 @@ app.post('/login', urlencodedParser, [
       .isEmail(),
   check('password', 'Invalid password').isLength({ min: 7 })
 
-], async (req, res) => {
+], 
+async (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()) {
       //return res.status(422).jsonp(errors.array())
@@ -104,7 +120,9 @@ app.post('/login', urlencodedParser, [
 
 
 // Sign UP
-app.post('/signUp', urlencodedParser, [
+app.post('/signUp', 
+urlencodedParser, 
+[
   check('username', 'This username must be 3+ characters long')
       .exists()
       .isLength({ min: 3 }),
@@ -112,7 +130,8 @@ app.post('/signUp', urlencodedParser, [
       .isEmail(),
   check('password', 'Invalid password').isLength({ min: 7 })
 
-], async (req, res) => {
+], 
+async (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()) {
       //return res.status(422).jsonp(errors.array())
@@ -141,14 +160,17 @@ app.post('/signUp', urlencodedParser, [
   });
 
   // Forgot Password
-  app.post('/forgotPassword', urlencodedParser, [
+  app.post('/forgotPassword', 
+  urlencodedParser, 
+  [
     check('username', 'This username must be 3+ characters long')
         .exists()
         .isLength({ min: 3 }),
     check('email', 'Email is not valid')
         .isEmail(),
   
-  ], async (req, res) => {
+  ], 
+  async (req, res) => {
       const errors = validationResult(req)
       if(!errors.isEmpty()) {
         //return res.status(422).jsonp(errors.array())
@@ -231,28 +253,47 @@ app.post('/signUp', urlencodedParser, [
   // Files Section
 
   // File Upload
-  app.post('/fileUpload', upload.single('upload'), async (req, res) => {
+  app.post('/fileUpload',
+    urlencodedParser, 
+  //  upload.single('upload'), 
+   async (req, res) => {
      // res.redirect('/Index');
-     //console.log(req);
-     //console.log(req.body);
-     //console.log(req.file);
-     const {title, description} = req.body;
-
-     const query = 'INSERT INTO files (title, description) VALUES (?, ?)';
+  //    const {title, description} = req.body;
+  //    console.log(title, description);
+  //    console.log(req.files.upload);
+  //    if (req.files){
+  //     // console.log(req.files);
+      
+  //     var file = req.files.upload;
+  //     var filename = file.name;
+  //     file.mv("./uploadedFiles/"+filename, async (err) => {
+  //         if (err){
+  //             console.log(err);
+  //             res.send("error occured");
+  //         }
+  //         else{
+  //           const query = 'INSERT INTO files (title, description) VALUES (?, ?)';
    
-     await db.run(
-         query,
-         [title, description],
-         (err) => {
-             if(err) return console.error(err.message);
-             console.log("File added successfully");
-             // res.json("User added successfully");
-             res.json("File added successfully");
-            //  res.redirect('/Login');
-         }
-     );
+  //           await db.run(
+  //               query,
+  //               [title, description],
+  //               (err) => {
+  //                   if(err) return console.error(err.message);
+  //                   console.log("File added successfully");
+  //                   // res.json("User added successfully");
+  //                   res.json("File added successfully");
+  //                  //  res.redirect('/Login');
+  //               }
+  //           );
+  //             // res.send("Done!");
+  //         }
+  //     });
+  // }
+    //  const {title, description} = req.body;
+    // console.log(title, description);
 
-     res.json(req.body);
+
+    //  res.json(req.body);
   });
 
   // file Search
@@ -304,6 +345,6 @@ app.post('/signUp', urlencodedParser, [
 
 
 
-app.listen(8080, () => {
-    console.log('Server is listening on port 8080')
+app.listen(port, () => {
+    console.log(`Server is listening on port ${port}`)
  });
