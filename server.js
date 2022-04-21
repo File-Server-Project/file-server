@@ -204,7 +204,7 @@ app.post('/register', urlencodedParser, [
                 to: `${email}`, // list of receivers
                 subject: "Reset Password", // Subject line
                 text: "Click this link to reset your password", // plain text body
-                html: '<p>Highlight the link below and click "go to to http://localhost:8080/ResetPassword" to reset your password</p> </br> <a>http://localhost:8080/ResetPassword</a>', // html body
+                html: `<p>Highlight the link below and click "go to to http://localhost:8080/ResetPassword?email=${email}" to reset your password</p> </br> <a>http://localhost:8080/ResetPassword</a>`, // html body
               };
               // send mail with defined transport object
               let info = await transporter.sendMail(msg);
@@ -225,8 +225,28 @@ app.post('/register', urlencodedParser, [
       }
   });
 
-  app.post('/reset', function(req, res) {
-    res.render('index');
+  app.post('/reset', async (req, res) => {
+    const {email, newPassword, confirmPassword} =req.body;
+    console.log(email,newPassword, confirmPassword);
+    if (newPassword === confirmPassword){
+      const query = `UPDATE users SET password = "${newPassword}" WHERE email = "${email}"`;
+   
+      await db.run(
+          query,
+          (err) => {
+              if(err) return console.error(err.message);
+              console.log("Password Reset Successful");
+              // res.redirect('/index');
+              res.json("Password Reset Successful");
+             
+          }
+      );
+    } else {
+      console.log("Passwords do not match");
+      res.json("Passwords do not match");
+    }
+
+    
   });
 
   app.get('/search', async function(req, res) {
