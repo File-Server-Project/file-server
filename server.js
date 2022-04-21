@@ -61,6 +61,10 @@ app.post('/login', function(req, res) {
   res.redirect('/Index');
 }); */
 
+
+// Users Section
+
+// Login
 app.post('/login', urlencodedParser, [
   check('username', 'This username must be 3+ characters long')
       .exists()
@@ -99,7 +103,8 @@ app.post('/login', urlencodedParser, [
 });
 
 
-app.post('/register', urlencodedParser, [
+// Sign UP
+app.post('/signUp', urlencodedParser, [
   check('username', 'This username must be 3+ characters long')
       .exists()
       .isLength({ min: 3 }),
@@ -135,34 +140,8 @@ app.post('/register', urlencodedParser, [
     // res.redirect('/Login');
   });
 
-  app.post('/upload', upload.single('upload'), async (req, res) => {
-     // res.redirect('/Index');
-     //console.log(req);
-     //console.log(req.body);
-     //console.log(req.file);
-     const {title, description} = req.body;
-
-     const query = 'INSERT INTO files (title, description) VALUES (?, ?)';
-   
-     await db.run(
-         query,
-         [title, description],
-         (err) => {
-             if(err) return console.error(err.message);
-             console.log("File added successfully");
-             // res.json("User added successfully");
-             res.json("File added successfully");
-            //  res.redirect('/Login');
-         }
-     );
-
-     res.json(req.body);
-    });
-
-
-
-
-  app.post('/password', urlencodedParser, [
+  // Forgot Password
+  app.post('/forgotPassword', urlencodedParser, [
     check('username', 'This username must be 3+ characters long')
         .exists()
         .isLength({ min: 3 }),
@@ -225,7 +204,8 @@ app.post('/register', urlencodedParser, [
       }
   });
 
-  app.post('/reset', async (req, res) => {
+  // Reset Password
+  app.post('/resetPassword', async (req, res) => {
     const {email, newPassword, confirmPassword} =req.body;
     console.log(email,newPassword, confirmPassword);
     if (newPassword === confirmPassword){
@@ -245,11 +225,38 @@ app.post('/register', urlencodedParser, [
       console.log("Passwords do not match");
       res.json("Passwords do not match");
     }
-
-    
+ 
   });
 
-  app.get('/search', async function(req, res) {
+  // Files Section
+
+  // File Upload
+  app.post('/fileUpload', upload.single('upload'), async (req, res) => {
+     // res.redirect('/Index');
+     //console.log(req);
+     //console.log(req.body);
+     //console.log(req.file);
+     const {title, description} = req.body;
+
+     const query = 'INSERT INTO files (title, description) VALUES (?, ?)';
+   
+     await db.run(
+         query,
+         [title, description],
+         (err) => {
+             if(err) return console.error(err.message);
+             console.log("File added successfully");
+             // res.json("User added successfully");
+             res.json("File added successfully");
+            //  res.redirect('/Login');
+         }
+     );
+
+     res.json(req.body);
+  });
+
+  // file Search
+  app.get('/fileSearch', async function(req, res) {
     const {search} = req.body;
     console.log(search);
     const query = `SELECT * FROM files WHERE title LIKE "%${search}%" AND description LIKE "%${search}%" `;
@@ -270,7 +277,10 @@ app.post('/register', urlencodedParser, [
 
   });
 
-  app.post("/download", async (req, res) => {
+
+
+  // File Download
+  app.post("/fileDownload", async (req, res) => {
     console.log(req.body);
 
     const {downloadFile} = req.body;
@@ -289,6 +299,8 @@ app.post('/register', urlencodedParser, [
   );
     // res.json(downloadFile);
   });
+
+  
 
 
 
