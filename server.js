@@ -258,37 +258,37 @@ async (req, res) => {
   //  upload.single('upload'), 
    async (req, res) => {
      // res.redirect('/Index');
-  //    const {title, description} = req.body;
-  //    console.log(title, description);
-  //    console.log(req.files.upload);
-  //    if (req.files){
-  //     // console.log(req.files);
+     const {title, description} = req.body;
+     console.log(title, description);
+     console.log(req.files.upload);
+     if (req.files){
+      // console.log(req.files);
       
-  //     var file = req.files.upload;
-  //     var filename = file.name;
-  //     file.mv("./uploadedFiles/"+filename, async (err) => {
-  //         if (err){
-  //             console.log(err);
-  //             res.send("error occured");
-  //         }
-  //         else{
-  //           const query = 'INSERT INTO files (title, description) VALUES (?, ?)';
+      var file = req.files.upload;
+      var filename = file.name;
+      file.mv("./uploadedFiles/"+filename, async (err) => {
+          if (err){
+              console.log(err);
+              res.send("error occured");
+          }
+          else{
+            const query = 'INSERT INTO files (title, description) VALUES (?, ?)';
    
-  //           await db.run(
-  //               query,
-  //               [title, description],
-  //               (err) => {
-  //                   if(err) return console.error(err.message);
-  //                   console.log("File added successfully");
-  //                   // res.json("User added successfully");
-  //                   res.json("File added successfully");
-  //                  //  res.redirect('/Login');
-  //               }
-  //           );
-  //             // res.send("Done!");
-  //         }
-  //     });
-  // }
+            await db.run(
+                query,
+                [title, description],
+                (err) => {
+                    if(err) return console.error(err.message);
+                    console.log("File added successfully");
+                    // res.json("User added successfully");
+                    res.json("File added successfully");
+                   //  res.redirect('/Login');
+                }
+            );
+              // res.send("Done!");
+          }
+      });
+  }
     //  const {title, description} = req.body;
     // console.log(title, description);
 
