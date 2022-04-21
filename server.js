@@ -1,31 +1,32 @@
 // JS script here
 const express = require('express');
 const app = express();
+const cookieparser = require('cookie-parser');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const fileupload = require('express-fileupload');
 const bodyParser = require('body-parser');
 const { extname, resolve } = require('path');
+require('dotenv').config();
+const { transporter, signup, verifyemail, createToken, login } = require('./Auth');
+const { loginrequired, mustVerifyEmail } = require('./JWT');
+const {Users, Files, Downloads, Emailings} = require('./models/users');
+const fs = require('fs');
 
-//imports
-const multer = require('multer');
+//imports  
 const { check, validationResult } = require('express-validator');
-const uuid = require('uuid').v4;
+
 
 // set the view engine to ejs
 app.use(express.static( __dirname + `/public`));
+app.use(cookieparser());
+app.use(express.json());
+app.use(cors());
+app.use(fileupload());
 app.set('views', './public');
 app.set('view engine', 'ejs');
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) =>{
-    cb(null, './uploads/');
-  },
-  filename: (req, file, cb) => {
-    const { originalname } = file;
-    cb(null, `${uuid()}-${originalname}`);
-  }
-});
-const upload = multer({ storage: storage });
 
 
 // login page
@@ -41,20 +42,40 @@ app.get('/Register', function(req, res) {
     res.render('Login');
   });
 
-  app.get('/FeedPage', function(req, res) {
-    res.render('feedPage');
+  
+
+  //go to feefpage
+  app.get('/FeedPage', async function(req, res) {
+    try {
+      const items = '';//Search the files table for all records
+
+      if(items) {
+        res.render('feedPage', {items: items});
+      } else {
+        items = [{msg : 'No files avalable'}];
+        res.render('feedPage', {items: items});
+      };
+      
+    } catch(err) {
+      console.log(err);
+    }
   });
 
-  app.get('/Index', function(req, res) {
+
+//redirecting  to index
+  app.get('/Index', loginrequired,  function(req, res) {
     res.render('index');
   });
 
-// index page
-/*
-app.post('/login', function(req, res) {
-  res.redirect('/Index');
-}); */
 
+//render index
+  app.get('/index', function(req, res) {
+    //let check = process.env.user === process.env.ADMIN;
+    res.render('index',);
+  });
+
+
+///when you click login button
 app.post('/login', urlencodedParser, [
   check('username', 'This username must be 3+ characters long')
       .exists()
@@ -63,19 +84,10 @@ app.post('/login', urlencodedParser, [
       .isEmail(),
   check('password', 'Invalid password').isLength({ min: 7 })
 
-], (req, res) => {
-    const errors = validationResult(req)
-    if(!errors.isEmpty()) {
-      //return res.status(422).jsonp(errors.array())
-      const alert = errors.array();
-
-      res.render('Login', {alert});
-    }
-    //res.redirect('/Register');
-    res.render('index');
-  });
+],/* mustVerifyEmail,*/ login);
 
 
+//when you click signup button
 app.post('/register', urlencodedParser, [
   check('username', 'This username must be 3+ characters long')
       .exists()
@@ -83,58 +95,134 @@ app.post('/register', urlencodedParser, [
   check('email', 'Email is not valid')
       .isEmail(),
   check('password', 'Invalid password').isLength({ min: 7 })
+], signup);
 
-], (req, res) => {
-    const errors = validationResult(req)
-    if(!errors.isEmpty()) {
-      //return res.status(422).jsonp(errors.array())
-      const alert = errors.array();
 
-      res.render('Register', {alert});
+
+//when you click upload button
+  app.post('/upload', async (req, res) => {
+    try {
+      console.log(req.files);
+      const title = req.body.title;
+      const description = req.body.description;
+      const filename = req.files.upload.name;
+      const filetype = req.files.upload.mimetype;
+
+      const findfile = await Files.findOne({ title : title });
+      if(findfile) {
+        console.log('file exists already');
+      }
+
+      let newfile = new Files({
+          title,
+          description,
+          filename,
+          filetype
+        });
+
+      await newfile.save((err, success) => {
+          if(err) {
+            console.log("Error uploading file: ", err);
+            return res.status(400).json({error: err})
+           }
+          console.log('File saved Successful!!');
+        })
+
+        let foldername = __dirname + `/uploads/${title}`;
+
+        if (!fs.existsSync(folderName)) {
+          fs.mkdirSync(folderName)
+        }
+
+       req.files.upload.mv( foldername+filename, function(err) {
+          if(err) {
+            res.send(err);
+          } else {
+            res.send("File Uploaded successfully");
+          }
+        });
+      
+    } catch(err) {
+      console.log(err);
     }
-    //res.redirect('/Register');git remote -v
-    
-    res.redirect('/Login');
   });
 
-  app.post('/upload', upload.single('upload'), (req, res) => {
-     // res.redirect('/Index');
-     //console.log(req);
-     //console.log(req.body);
-     //console.log(req.file);
-     res.json(req.body);
-    });
+
+///email verification
+    app.get('/verifyemail', verifyemail);
 
 
 
-
-  app.post('/password', urlencodedParser, [
+///when you try to reset password
+  app.post('/reset', urlencodedParser, [
     check('username', 'This username must be 3+ characters long')
         .exists()
         .isLength({ min: 3 }),
     check('email', 'Email is not valid')
         .isEmail(),
-  
-  ], (req, res) => {
-      const errors = validationResult(req)
-      if(!errors.isEmpty()) {
-        //return res.status(422).jsonp(errors.array())
-        const alert = errors.array();
-  
-        res.render('ForgetPassword', {alert});
+   check('Newpassword', 'Invalid password').isLength({ min: 7 }),
+    check('resetpass', 'Invalid password').isLength({ min: 7 })
+  ], async (req, res) => {
+   try {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()) {
+      //return res.status(422).jsonp(errors.array())
+      const alert = errors.array();
+      res.render('ForgetPassword', {alert});
+    }
+
+    const {username, email, Newpassword, resetpass } = req.body;
+
+    const findfile = await Users.findOne({ username : username, email: email });
+
+    if(findfile) {
+
+      if(Newpassword === resetpass) {
+        Users.findOneAndUpdate({username: username}, {email: email}, {password: Newpassword}, (err, updatedDoc) => {
+          if(err) return console.log(err);
+          done(null, updatedDoc);
+        });
+      } else{
+        res.send('New password must be equal to confirm password');
       }
+
+    } else {
+      res.send('User with username and email does not exist');
+    }
+
+        
+   } catch(err) {
+     console.log(err)
+;   }
+      
   });
 
-  app.post('/reset', function(req, res) {
-    res.render('index');
+
+
+
+///when you type a search in homepage
+  app.post('/search',  async function(req, res) {
+    const searchword = req.body.search;
+    const items = await Files.find({ title: { $regex: searchword } });
+    if(items.length !== 0) {
+      res.render('index', {items} );
+    } else {
+      items = [{filename : 'No files avalable'}];
+        res.render('index', {items: items});
+    }
+    
   });
 
-  app.get('/search', function(req, res) {
-    res.render('index', {items} );
+
+///when you click logout
+  app.get('/logout', function(req, res) {
+    res.cookie('access-token', "", { maxAge : 1 });
+    res.redirect('/Login' );
   });
 
 
 
-app.listen(8080, () => {
-    console.log('Server is listening on port 8080')
+const port = process.env.PORT;
+app.listen(port, () => {
+    console.log(`Server is listening on port ${port}`)
  });
