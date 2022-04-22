@@ -1,6 +1,7 @@
 // JS script here
 const express = require('express');
 const app = express();
+const port = 8080
 const bodyParser = require('body-parser');
 const { extname, resolve } = require('path');
 
@@ -170,6 +171,6 @@ app.post('/register', urlencodedParser, [
 
 
 
-app.listen(8080, () => {
+app.listen(port, () => {
     console.log('Server is listening on port 8080')
  });
