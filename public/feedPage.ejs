@@ -52,13 +52,15 @@
    
       <main >
         <div class="container-fluid">
+          <% if(items.length !== 0) { %>
             <% items.forEach(function(item) { %>
               <div class="row">
                 <%= item.filename %>
-                  <span><button>Download</button> ----<button>Send</button</span>
+                <span><a href="/fileDownload">Download</a> ----<a href="/sendFile">Send</a></span>
                 
               </div>
           <% }) %>
+        <%}%>  
   
         </div>
       </main>

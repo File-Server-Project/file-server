@@ -76,11 +76,11 @@
             </div>
 
             <div class="container sidebar">
-              <% if(items !== 'undefined') { %>
+              <% if(items.length !== 0) { %>
                 <% items.forEach(function(item) { %>
                   <div class="row">
                     <p><%= item.filename %></p>
-                      <span><button>Download</button> ----<button>Send</button</span>
+                      <span><a href="/fileDownload">Download</a> ----<a href="/sendFile">Send</a></span>
                     
                   </div>
               <% }) %> 
@@ -90,7 +90,7 @@
   
   
             <div class="col upload">
-              <form action="/upload" method="POST">
+              <form action="/fileUpload" method="POST">
   
                 <div class="form-group">
                   <label for="title" class="form-label">Title</label>
