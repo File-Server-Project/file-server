@@ -303,13 +303,13 @@ exports.fileUpload = async (req, res) => {
     
     await db.all(query, (err, items) => {
      if(err) return console.error(err.message);
-     console.log(itemss.length);
-     if (rows.length === 0){
+     console.log(items.length);
+     if (items.length === 0){
          res.json("No such file");
          console.log("No such file");
      }else{
-         console.log(rows);
-         res.json(items);
+         console.log(items);
+         res.render('index',{items: items});
  
      }
  });
@@ -321,14 +321,25 @@ exports.fileUpload = async (req, res) => {
   
 exports.feedPage = async (req, res) => {
   try {
-    const items = '';//Search the files table for all records
+    const query = 'SELECT * FROM files';
+  
+           await db.run(
+               query,
+               (err, items) => {
+               if(err) return console.error(err.message);
 
-      if(items) {
-        res.render('feedPage', {items: items});
-      } else {
-        items = [{msg : 'No files avalable'}];
-        res.render('feedPage', {items: items});
-      };
+               if(items.length === 0) {
+                  res.json("No such file");
+                  console.log("No such file");
+                } else {
+                   console.log(items);
+                res.render('feedPage',{items: items});
+        
+                   //res.json("No File Exists");
+                  //  res.redirect('/Login');
+               }
+              });
+     
   } catch(err) {
     console.log(err);
   }
