@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>File Server</title>
+        <script src = "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+        <link rel="stylesheet" href="../css/feed.css">
+    </head>
+    <body>
+        <div id="overlay">
+            <div id="modal">
+                <form id="upload_form" action="">
+                    <div>
+                        <input id="title" placeholder="Title" type="text">
+                    </div>
+                    <div>
+                        <input id="description" placeholder="Description" type="text">
+                    </div>
+                    <div>
+                        <input type="file" name="file" id="file">
+                    </div>
+                    <div>
+                        <button type="submit" id="upload_btn">Upload</button>
+                        <button id="cancel_btn" onclick="closeModal()">CANCEL</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- <div id="container"> -->
+            <header>
+                <nav>
+                    <a id="logo" href="">FILE SERVER</a>
+                    <a id="logout" href="https://fileserver-amalitech.herokuapp.com/index.html">LOGOUT</a>
+                </nav>
+            </header>
+            <section id="search_section">
+                <form id="serach_form" action="">
+                    <input id="search_input" type="text">
+                    <button id="search_btn">Search</button>
+                </form>
+            </section>
+                <button id="show_modal_btn" onclick="showModal()">Upload File</button>
+            
+            <div id="grid_header">
+                <div id="action_header"><b>Action</b></div>
+                <div id="title_header"><b>Title</b></div>
+                <div id="file_name_header"><b>File Name</b></div>
+                <div id="description_header"><b>Description</b></div>
+            </div>
+            <div id="grid" class="grid">
+                
+
+                <!-- <div id="row" class="row">
+                    <div id="action_field" class="action_field"><p id="download_btn" class="download_btn">Download</p><p id="send_email" class="send_email">Email</p></div>
+                    <div id="title_field" class="title_field">Title</div>
+                    <div id="file_name_field" class="file_name_field">Filename</div>
+                    <div id="description_field" class="description_field">Description</div>
+                </div> -->
+            </div>
+            <div id="search_grid" class="grid">
+
+            </div>
+        <!-- </div> -->
+                    <!-- <div id="download_header"><button id="download_btn">Download</button></div>
+                    <div id="email_header"><button id="email_btn">Email</button></div>
+                    <div id="title_header">Title</div>
+                    <div id="description_header">Description</div> -->
+        <!-- <footer>
+
+        </footer> -->
+    </body>
+    <script src = "../scripts/feed.js"></script>
+</html> 
