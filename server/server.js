@@ -191,7 +191,7 @@ app.post('/fileSearch',  async function(req, res) {
 
 // File Download
 app.get("/fileDownload", async (req, res) => { 
-   
+
   const {fileName, fileId} = req.query;
   console.log(fileId);
   console.log(fileName);
@@ -211,6 +211,67 @@ app.get("/fileDownload", async (req, res) => {
   
 });
 
+//email files
+app.post('/fileEmail', async (req, res) => {
+  const {fileId, recepientEmail} = req.body;
+  console.log(fileId, recepientEmail);
+  let fileName = "";
+  const query = `SELECT fileName FROM files WHERE fileId = ${fileId}`;
+
+  await db.all(query, async(err, rows) => {
+    if(err) return console.error(err.message);
+    // console.log(rows.length);
+    rows.forEach(row => {
+      fileName = row.fileName;
+    });
+
+    let transporter = nodemailer.createTransport({
+      host: "smtp.ethereal.email",
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: 'gardner.littel10@ethereal.email', // generated ethereal user
+        pass: 'wuAQHdZaRu7Q7XcBqv', // generated ethereal password
+      },
+    });
+
+    const msg = {
+      from: '"The File Server" <info@fileserver.com>', // sender address
+      to: `${recepientEmail}`, // list of receivers
+      subject: "Emailled file", // Subject line
+      text: "Please find attatch your a file", // plain text body
+      attachments: [
+        {   // file on disk as an attachment
+          filename: `${fileName}`,
+          path: `./uploadedFiles/${fileName}` // stream this file
+        }
+      ]
+    };
+    // send mail with defined transport object
+    await transporter.sendMail(msg, async (err, info) => {
+      if (err) console.error(err.message);
+
+      // console.log("Message sent: %s", info.messageId);
+      // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+      // Preview only available when sending through an Ethereal account
+      // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+
+      const query = `INSERT INTO emails (emailFile, emailAddr) VALUES (?,?)`;
+      console.log(recepientEmail);
+      await db.run(
+        query,
+        [fileId,recepientEmail],
+        (err) => {
+            if(err) return console.error(err.message);
+            console.log('File sent');
+            res.json('File sent');
+        }
+      );
+      
+    })
+  });
+});
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`)
