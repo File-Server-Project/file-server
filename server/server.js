@@ -162,6 +162,18 @@ app.post('/fileUpload',
   }
 });
   
+//Get All files
+
+app.get('/allFiles', async (req, res) => {
+  const query = `SELECT * FROM files`;
+
+  await db.all(query, (err, rows) => {
+    if(err) return console.error(err.message);
+
+    res.json(rows);
+
+  });
+});
 
 
 app.listen(port, () => {
