@@ -294,6 +294,22 @@ app.post('/fileEmailCount', async (req, res) => {
   
   });
 
+  const downloadQuery = `SELECT count(*) AS downloadCount FROM downloads WHERE downloadFile = ${fileId}`;
+
+  await db.all(downloadQuery, (err, rows) => {
+    if(err) return console.error(err.message);
+        
+    rows.forEach(row => {
+      console.log(row);
+      // res.json(row);
+      // emailDownloadCount.downloadCount = row;
+      emailDownloadCount.push(row);
+      console.log(emailDownloadCount);
+    });
+
+    res.json(emailDownloadCount);
+  
+  });
 
 });
 
