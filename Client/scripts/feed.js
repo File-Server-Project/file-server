@@ -179,3 +179,32 @@ const download = (click_id) => {
     window.location.href = `https://fileserverapi.herokuapp.com/fileDownload?fileName=${fileName}&fileId=${fileId}`;
 
 }
+
+//Upload a file
+$('#upload_form').submit(function (e) {
+    e.preventDefault();
+    const form_data = new FormData(upload_form);
+
+    $.ajax({
+        url: 'https://fileserverapi.herokuapp.com/fileUpload',
+        type: 'POST',
+
+        cache: false,
+        // "multipart/form-data",
+        contentType: false,
+        processData: false,
+        data: form_data,
+        enctype: 'multipart/form-data',
+        
+        success: function(files) {
+            console.log("FIle uploaded");
+            alert("FIle uploaded");
+
+
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+
+});
