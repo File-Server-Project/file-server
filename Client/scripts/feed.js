@@ -59,6 +59,49 @@ $(document).ready(function () {
     })
 });
 
+//Get Specific files or files
+$('#search_btn').click(function (e) {
+    e.preventDefault();
+    let searchInfo = {
+        search: $('#search_input').val()
+    }
+    $("#grid").html("");
+    $.ajax({
+        url: 'https://fileserverapi.herokuapp.com/fileSearch',
+        type: 'POST',
+        data: JSON.stringify(searchInfo),
+        dataType: 'json',
+        contentType: "application/json",
+        success: function(files) {
 
+            if (files.length !== 0) {
+                console.log(files);
+                let grid = $('#grid');
+                let gridContent = "";
+                files.forEach(file => {
+                    
+                    gridContent = `
+                    <div id="row" class="row">
+                        <div id="action_field" class="action_field"><p id="download_btn${file.fileId}" class="download_btn">Download</p>
+                        <p id="${file.fileId}" class="send_email" onclick="fileToEmail(this.id)">Email</p></div>
+                        <div id="title_field" class="title_field">${file.title}</div>
+                        <div id="file_name_field" class="file_name_field" onclick="fileDownloadEmailCount(this.id)">${file.fileName}</div>
+                        <div id="description_field" class="description_field">${file.description}</div>
+                    </div>
+                    `;
+                    grid.append(gridContent);
+
+
+                });
+            }else{
+                alert("No such FIle");
+            }
+
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+});
 
 
