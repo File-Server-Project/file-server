@@ -298,6 +298,25 @@ app.post('/forgotPassword',
     //  res.json(req.body);
   });
 
+  //Get All files
+
+app.get('/allFiles', async (req, res) => {
+  const query = `SELECT * FROM files`;
+
+  await db.all(query, (err, rows) => {
+    if(err) return console.error(err.message);
+    console.log(rows.length);
+    if (rows.length === 0){
+        res.json("No file");
+        console.log("No file");
+    }else{
+        res.json(rows);
+        console.log(rows);
+      //  res.render('index', {items} );
+    }
+});
+});
+
   // file Search
   app.get('/fileSearch', urlencodedParser, async function(req, res) {
     const {search} = req.body;
@@ -313,10 +332,10 @@ app.post('/forgotPassword',
       }else{
           res.json(rows);
           console.log(rows);
-
+        //  res.render('index', {items} );
       }
   });
-    // res.render('index', {items} );
+   
 
   });
 
@@ -343,7 +362,58 @@ app.post('/forgotPassword',
     // res.json(downloadFile);
   });
 
+    //email files
+    app.post('/fileEmail', async (req, res) => {
+      const {fileName, email} = req.body;
+      console.log(fileName, email);
+
+      let transporter = nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: 'gardner.littel10@ethereal.email', // generated ethereal user
+          pass: 'wuAQHdZaRu7Q7XcBqv', // generated ethereal password
+        },
+      });
+
+      const msg = {
+        from: '"The File Server" <info@fileserver.com>', // sender address
+        to: `${email}`, // list of receivers
+        subject: "Reset Password", // Subject line
+        text: "Click this link to reset your password", // plain text body
+        html: `<p>Highlight the link below and click "go to to http://localhost:8080/ResetPassword?email=${email}" to reset your password</p> </br> <a>http://localhost:8080/ResetPassword</a>`, // html body
+        attachments: [
+          {   // file on disk as an attachment
+            filename: `${fileName}`,
+            path: `./uploadedFiles/${fileName}` // stream this file
+          }
+        ]
+      };
+      // send mail with defined transport object
+      let info = await transporter.sendMail(msg, (err) => {
+        if (err) {
+          console.error(err.message);
+        } else {
+          console.log('Email Sent');
+          res.json('Email sent');
+        }
   
+        // console.log('Email Sent');
+        // res.json('Email sent');
+  
+      });
+    
+      // console.log("Message sent: %s", info.messageId);
+      // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+    
+      // Preview only available when sending through an Ethereal account
+      // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+  
+      // console.log('Email Sent');
+      // res.json('Email sent');
+  
+    });
 
 
 
