@@ -273,6 +273,30 @@ app.post('/fileEmail', async (req, res) => {
   });
 });
 
+//file emailed count
+app.post('/fileEmailCount', async (req, res) => {
+
+  const {fileId} = req.body;
+  console.log(fileId);
+  let emailDownloadCount = [];
+  const emailQuery = `SELECT count(*) AS emailCount FROM emails WHERE emailFile = ${fileId}`;
+
+  await db.all(emailQuery, async (err, rows) => {
+    if(err) return console.error(err.message);
+        
+    rows.forEach(row => {
+      console.log(row);
+      // res.json(row);
+      // emailDownloadCount.emailCount = row;
+      emailDownloadCount.push(row);
+      console.log(emailDownloadCount);
+    });
+  
+  });
+
+
+});
+
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`)
  });
