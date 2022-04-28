@@ -1,0 +1,64 @@
+body {
+    background: #06454d;
+}
+
+#login_form_div {
+    border: 2px solid white;
+    width: 700px;
+    height: 400px;
+    background-color: #012F34;
+    margin-top: 250px;
+    margin-left: 550px;
+    border-radius: 30px;
+    
+}
+
+::placeholder{
+    font-size: 20px;
+    margin-left: 20px;
+}
+
+#email{
+    width: 500px;
+    height: 40px;
+    border-radius: 20px;
+    padding-left: 20px;
+    margin-bottom: 30px;
+    margin-left: 90px;
+    margin-top: 70px;
+    font-size: 20px;
+}
+
+
+
+#password{
+    width: 500px;
+    height: 40px;
+    border-radius: 20px;
+    padding-left: 20px;
+    margin-bottom: 30px;
+    margin-left: 90px;
+    font-size: 20px;
+
+}
+
+#login_btn{
+    width: 150px;
+    height: 40px;
+    font-size: 20px;
+    border-radius: 30px;
+    margin-left: 250px;
+    margin-bottom: 30px;
+}
+
+#forgot_password{
+    color: white;
+    margin-left: 130px;
+}
+
+#sign_up{
+    margin-left: 190px;
+    color: white;
+}
+
+a:link{ text-decoration: none;}
