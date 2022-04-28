@@ -187,8 +187,28 @@ app.post('/fileSearch',  async function(req, res) {
     console.log(rows);
     res.json(rows);
   });
-  
+});
 
+// File Download
+app.get("/fileDownload", async (req, res) => { 
+   
+  const {fileName, fileId} = req.query;
+  console.log(fileId);
+  console.log(fileName);
+
+  res.zip([
+    {path: `./uploadedFiles/${fileName}`, name: `${fileName}`}
+  ]);
+
+  const query = `INSERT INTO downloads (downloadFile) VALUES (${fileId})`;
+
+  await db.run(query, (err,) => {
+    if(err) return console.error(err.message);
+    
+    console.log("saved")
+
+  });
+  
 });
 
 
