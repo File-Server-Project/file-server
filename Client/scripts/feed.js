@@ -166,3 +166,16 @@ const fileToEmail = (click_id) => {
     });
 
 }
+
+//download a file
+const download = (click_id) => {
+
+    let fileId = click_id;
+    let fileName = $(`#file_name_${fileId}`).text();
+    console.log(fileId);
+    console.log(fileName);
+
+
+    window.location.href = `https://fileserverapi.herokuapp.com/fileDownload?fileName=${fileName}&fileId=${fileId}`;
+
+}
