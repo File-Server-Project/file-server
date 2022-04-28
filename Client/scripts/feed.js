@@ -104,4 +104,33 @@ $('#search_btn').click(function (e) {
     })
 });
 
+// count the number of times a file has been downloaded and send to an email
+const DownloadEmailCount = (click_id) => {
+    let fileId = click_id.split("_")[2];
+    // console.log(fileId);
+    console.log("here")
+    let countInput = {
+        fileId : fileId
+    }
 
+    $.ajax({
+        url: 'https://fileserverapi.herokuapp.com/fileEmailCount',
+        type: 'POST',
+        data: JSON.stringify(countInput),
+        dataType: 'json',
+        contentType: "application/json",
+        success: (result) => {
+            console.log(result[0].emailCount);
+            let emailCount = result[0].emailCount
+            let downloadCount = result[1].downloadCount
+
+            alert(`Email Count = ${emailCount} \nDownload Count = ${downloadCount}`);
+           
+        },
+        error: (err) => {
+            console.log(err);
+        }
+
+    });
+
+}
