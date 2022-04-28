@@ -134,3 +134,35 @@ const DownloadEmailCount = (click_id) => {
     });
 
 }
+
+// file to an email adress
+const fileToEmail = (click_id) => {
+    let fileId = click_id;
+    // console.log(fileId);
+    let recepientEmail = prompt("Receipient email");
+    // console.log(recepientEmail);
+
+    let emailInfo = {
+        fileId: fileId,
+        recepientEmail: recepientEmail
+    };
+    
+    console.log(emailInfo);
+    $.ajax({
+        url: 'https://fileserverapi.herokuapp.com/fileEmail',
+        type: 'POST',
+        data: JSON.stringify(emailInfo),
+        dataType: 'json',
+        contentType: "application/json",
+        success: (result) => {
+            console.log(result);
+            if(result) alert("File Sent to " + recepientEmail);
+           
+        },
+        error: (err) => {
+            console.log(err);
+        }
+
+    });
+
+}
