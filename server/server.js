@@ -175,6 +175,22 @@ app.get('/allFiles', async (req, res) => {
   });
 });
 
+// file Search
+app.post('/fileSearch',  async function(req, res) {
+  const {search} = req.body;
+  console.log(search);
+  const query = `SELECT * FROM files WHERE title LIKE "%${search}%" AND description LIKE "%${search}%" `;
+
+  await db.all(query, (err, rows) => {
+    if(err) return console.error(err.message);
+
+    console.log(rows);
+    res.json(rows);
+  });
+  
+
+});
+
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`)
